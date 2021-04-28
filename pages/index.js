@@ -67,10 +67,13 @@ export default function Home() {
   const [metrics, setMetrics] = useState();
   const [request, setRequest] = useState();
 
+  const [loading, setLoading] = useState(false);
+
   const [password, setPassword] = useState();
 
   const fetchData = async () => {
     if (investmentAmount) {
+      setLoading(true);
       const res = await fetch(
         `https://api.airtable.com/v0/appUdh14c6zo2HVSm/Investment%20Rounds?filterByFormula={Fund}='${fund}'`,
         {
@@ -89,6 +92,7 @@ export default function Home() {
       calculateMetrics(formattedData);
       setRequest({ fund, amount: investmentAmount });
       setAtData(formattedData);
+      setLoading(false);
       // setAtData(formattedData);
     } else {
       alert("please insert an investment amount");
@@ -108,7 +112,7 @@ export default function Home() {
       multiple: raw["Multiple"],
       seis: raw["Investment Type"],
       currentValue: raw["Current Value"],
-      status: raw["Investee Business Status"]
+      status: raw["Investee Business Status"],
     };
   };
 
@@ -140,6 +144,7 @@ export default function Home() {
 
   return (
     <Container>
+      {loading && <LoadingState />}
       {password !== process.env.NEXT_PUBLIC_PASSWORD ? (
         <PasswordProtect handleSetPassword={handleSetPassword} />
       ) : (
@@ -297,6 +302,22 @@ const TableContainer = styled.table`
   }
 `;
 
+const LoadingContainer = styled.div`
+  height: 100vh;
+  width: 100%;
+  background: black;
+  opacity: 0.5;
+  font-size: 3rem;
+  position: absolute;
+  display: grid;
+  place-items: center;
+  color: white;
+`;
+
+const LoadingState = () => {
+  return <LoadingContainer>Loading...</LoadingContainer>;
+};
+
 const Table = ({ atData, investmentAmount, fund, metrics }) => {
   const {
     fundSize,
@@ -359,7 +380,9 @@ const Investment = ({ investment, investmentAmount, investorPercentage }) => {
       <td>
         {investment.website ? (
           <Link href={investment.website}>
-            <a href={investment.website} target="_blank">{investment.name}</a>
+            <a href={investment.website} target='_blank'>
+              {investment.name}
+            </a>
           </Link>
         ) : (
           <>{investment.name}</>
