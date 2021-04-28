@@ -1,6 +1,8 @@
 import { useState } from "react";
 import styled from "styled-components";
 
+import Link from "next/link";
+
 const Title = styled.h1`
   /* font-size: 2em; */
   color: ${({ theme }) => theme.colors.primary};
@@ -59,7 +61,7 @@ const Summary = styled.div`
 `;
 
 export default function Home() {
-  const [investmentAmount, setInvestmentAmount] = useState(0);
+  const [investmentAmount, setInvestmentAmount] = useState(10000);
   const [fund, setFund] = useState("ASCEND 15");
   const [atData, setAtData] = useState();
   const [metrics, setMetrics] = useState();
@@ -106,6 +108,7 @@ export default function Home() {
       multiple: raw["Multiple"],
       seis: raw["Investment Type"],
       currentValue: raw["Current Value"],
+      status: raw["Investee Business Status"]
     };
   };
 
@@ -272,6 +275,9 @@ const TableContainer = styled.table`
     background-color: darkslategray;
     color: white;
   }
+  a {
+    color: darkblue;
+  }
 
   th,
   td {
@@ -304,8 +310,9 @@ const Table = ({ atData, investmentAmount, fund, metrics }) => {
       <thead>
         <tr>
           <th>Company Name</th>
-          <th>Approx Investment Amount</th>
+          <th>Approx Investment</th>
           <th>Approx Income Tax Relief</th>
+          <th>Status</th>
           <th>Multiple</th>
           <th>Current Value</th>
         </tr>
@@ -330,6 +337,7 @@ const Table = ({ atData, investmentAmount, fund, metrics }) => {
             £
             {(fundSize * investorPercentage * incomeTaxRelief).toLocaleString()}
           </td>
+          <td></td>
           <td>{(currentTotalValue / fundSize).toLocaleString()}</td>
           <td>£{(currentTotalValue * investorPercentage).toLocaleString()}</td>
         </tr>
@@ -348,11 +356,20 @@ const Investment = ({ investment, investmentAmount, investorPercentage }) => {
 
   return (
     <tr>
-      <td>{investment.name}</td>
+      <td>
+        {investment.website ? (
+          <Link href={investment.website}>
+            <a href={investment.website} target="_blank">{investment.name}</a>
+          </Link>
+        ) : (
+          <>{investment.name}</>
+        )}
+      </td>
       <td>
         £{(investment.amountInvested * investorPercentage).toLocaleString()}
       </td>
       <td>£{incomeTaxRelief.toLocaleString()}</td>
+      <td>{investment.status}</td>
       <td>{investment.multiple.toLocaleString()}</td>
       <td>
         £{(investment.currentValue * investorPercentage).toLocaleString()}
