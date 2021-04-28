@@ -1,26 +1,37 @@
-import { createGlobalStyle, ThemeProvider } from 'styled-components'
+import { createGlobalStyle, ThemeProvider } from "styled-components";
 
 const GlobalStyle = createGlobalStyle`
-  body {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
-`
+html, body {
+	margin: 0;
+	font-family: sans-serif;
+  background: ${({ theme }) => theme.colors.background};
+}
+
+*,
+*:before,
+*:after {
+  box-sizing: border-box;
+}
+
+h1, h2, h3, h4, h5, p {
+	margin: 0;
+}
+`;
 
 const theme = {
   colors: {
-    primary: '#0070f3',
+    primary: "#fff",
+    background: "#202937",
   },
-}
+};
 
 export default function App({ Component, pageProps }) {
   return (
     <>
-      <GlobalStyle />
+      <GlobalStyle theme={theme} />
       <ThemeProvider theme={theme}>
         <Component {...pageProps} />
       </ThemeProvider>
     </>
-  )
+  );
 }
